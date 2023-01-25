@@ -1,0 +1,25 @@
+[package]
+name = "nitroxide"
+version = "0.1.0"
+authors = ["Xithrius <xithrius@gmail.com>"]
+edition = "2021"
+rust-version = "1.57"
+description = "File explorer"
+repository = "https://github.com/Xithrius/nitroxide"
+license = "MIT OR Apache-2.0"
+
+[build-dependencies]
+tauri-build = { version = "1.2", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+tauri = { version = "1.2", features = ["shell-open"] }
+
+[features]
+# by default Tauri runs in production mode
+# when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
+default = ["custom-protocol"]
+# this feature is used used for production builds where `devPath` points to the filesystem
+# DO NOT remove this
+custom-protocol = ["tauri/custom-protocol"]
