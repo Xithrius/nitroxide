@@ -53,9 +53,11 @@ jobs:
           components: rust-src
 
       - name: Build
+        working-directory: ./src-tauri
         run: cargo build --verbose --target ${{ matrix.target }}
 
       - name: Run tests
+        working-directory: ./src-tauri
         run: cargo test --verbose --target ${{ matrix.target }}
 
   lint:
@@ -77,9 +79,11 @@ jobs:
           rustup component add clippy
 
       - name: Check formatting
+        working-directory: ./src-tauri
         run: cargo fmt --all -- --check
 
       - name: Check code for possible improvements
+        working-directory: ./src-tauri
         run: cargo clippy -- -D warnings
 
       # Prepare the Pull Request Payload artifact. If this fails, we

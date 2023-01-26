@@ -1,8 +1,8 @@
 {
   "recommendations": [
+    "Vue.volar",
     "tauri-apps.tauri-vscode",
     "rust-lang.rust-analyzer",
     "serayuzgur.crates",
-    "tauri-apps.tauri-vscode"
   ]
 }
