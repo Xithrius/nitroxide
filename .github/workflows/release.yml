@@ -1,15 +1,13 @@
-name: CI
+name: Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-
-env:
-  CARGO_TERM_COLOR: always
+    tags:
+      - "v*"
+  workflow_dispatch:
 
 jobs:
-  build:
+  release:
     strategy:
       fail-fast: false
 
@@ -45,6 +43,18 @@ jobs:
 
       - name: Install app dependencies and build web
         run: yarn && yarn build
+
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "nitroxide v__VERSION__"
+          releaseBody: "See the assets to download and install this version."
+          releaseDraft: true
+          prerelease: false
 
       - name: Prepare Pull Request Payload artifact
         id: prepare-artifact
