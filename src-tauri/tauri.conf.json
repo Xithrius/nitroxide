@@ -12,7 +12,7 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+      "all": true,
       "shell": {
         "all": false,
         "open": true
@@ -63,7 +63,9 @@
         "height": 600,
         "resizable": true,
         "title": "nitroxide",
-        "width": 800
+        "width": 800,
+        "theme": "Dark",
+        "decorations": false
       }
     ]
   }
