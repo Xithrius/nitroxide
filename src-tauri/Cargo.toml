@@ -3,7 +3,7 @@ name = "nitroxide"
 version = "0.1.0"
 authors = ["Xithrius <xithrius@gmail.com>"]
 edition = "2021"
-rust-version = "1.57"
+rust-version = "1.61.0"
 description = "File explorer"
 repository = "https://github.com/Xithrius/nitroxide"
 license = "MIT OR Apache-2.0"
@@ -11,15 +11,15 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.2", features = [] }
+tauri-build = { version = "1.3.0", features = [] }
 
 [dependencies]
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2", features = ["api-all"] }
+serde_json = "1.0.96"
+serde = { version = "1.0", features = [ "derive" ] }
+tauri = { version = "1.3", features = ["api-all"] }
 
 [target.'cfg(windows)'.dependencies]
-openssl = { version = "0.10", features = ["vendored"] }
+openssl = { version = "0.10", features = [ "vendored" ] }
 
 [features]
 # by default Tauri runs in production mode
