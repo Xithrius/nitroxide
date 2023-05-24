@@ -11,7 +11,20 @@ fn home_folder_items() -> Vec<String> {
 
     let entries = fs::read_dir(home)
         .unwrap()
-        .flat_map(|res| res.map_or(None, |e| Some(e.path().to_str().unwrap().to_string())))
+        .flat_map(|res| {
+            res.map_or(None, |e| {
+                Some(
+                    e.path()
+                        .to_str()
+                        .unwrap()
+                        .to_string()
+                        .split('/')
+                        .last()
+                        .unwrap()
+                        .to_string(),
+                )
+            })
+        })
         .collect::<Vec<String>>();
 
     entries
