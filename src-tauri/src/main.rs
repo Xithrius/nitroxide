@@ -5,34 +5,64 @@
 
 use std::{env, fs};
 
-#[tauri::command]
-fn home_folder_items() -> Vec<String> {
-    let home = env::var("HOME").unwrap();
+use serde::Serialize;
 
-    let entries = fs::read_dir(home)
+#[derive(Serialize)]
+struct DirItem {
+    name: String,
+    is_directory: bool,
+    is_hidden: bool,
+}
+
+impl DirItem {
+    fn new(name: String, is_directory: bool, is_hidden: bool) -> Self {
+        Self {
+            name,
+            is_directory,
+            is_hidden,
+        }
+    }
+}
+
+#[tauri::command]
+fn folder_items(context: Option<&str>) -> Vec<DirItem> {
+    let ctx = if let Some(c) = context {
+        c.to_string()
+    } else {
+        env::var("HOME").unwrap()
+    };
+
+    let mut entries = fs::read_dir(ctx)
         .unwrap()
         .flat_map(|res| {
             res.map_or(None, |e| {
-                Some(
-                    e.path()
-                        .to_str()
-                        .unwrap()
-                        .to_string()
-                        .split('/')
-                        .last()
-                        .unwrap()
-                        .to_string(),
-                )
+                let item = e.path();
+
+                let name = item
+                    .to_str()
+                    .unwrap()
+                    .split('/')
+                    .last()
+                    .unwrap()
+                    .to_string();
+
+                Some(DirItem::new(
+                    name.to_string(),
+                    item.is_dir(),
+                    name.starts_with("."),
+                ))
             })
         })
-        .collect::<Vec<String>>();
+        .collect::<Vec<DirItem>>();
+
+    entries.sort_by(|a, b| a.name.cmp(&b.name));
 
     entries
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![home_folder_items])
+        .invoke_handler(tauri::generate_handler![folder_items])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
