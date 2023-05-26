@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TitleBar from "./components/TitleBar.vue";
-import Files from "./components/Files.vue";
+import DirectoryList from "./components/DirectoryList.vue";
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import Files from "./components/Files.vue";
     <TitleBar />
 
     <div class="bg-stone-800">
-      <Files />
+      <DirectoryList />
     </div>
   </div>
 </template>

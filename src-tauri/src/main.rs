@@ -3,11 +3,11 @@
     windows_subsystem = "windows"
 )]
 
-use std::{env, fs};
+use std::{cmp::Ordering, env, fs};
 
 use serde::Serialize;
 
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq, PartialOrd, Eq)]
 struct DirItem {
     name: String,
     is_directory: bool,
@@ -21,6 +21,19 @@ impl DirItem {
             is_directory,
             is_hidden,
         }
+    }
+}
+
+impl Ord for DirItem {
+    // Final result should be dirs, hidden dirs, files, hidden files.
+    // All are sorted by name in each section.
+    // TODO: Hidden file sorting by name is out of order.
+    fn cmp(&self, other: &Self) -> Ordering {
+        other
+            .is_directory
+            .cmp(&self.is_directory)
+            .then(self.is_hidden.cmp(&other.is_hidden))
+            .then(self.name.cmp(&other.name))
     }
 }
 
@@ -55,7 +68,7 @@ fn folder_items(context: Option<&str>) -> Vec<DirItem> {
         })
         .collect::<Vec<DirItem>>();
 
-    entries.sort_by(|a, b| a.name.cmp(&b.name));
+    entries.sort_by(|a, b| a.cmp(&b));
 
     entries
 }
