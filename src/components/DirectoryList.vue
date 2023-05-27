@@ -3,16 +3,27 @@ import { Ref, ref } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
 type DirItem = {
+  path: string;
   name: string;
   is_directory: boolean;
   is_hidden: boolean;
 };
 
+let context = ref("");
+
 let items: Ref<DirItem[]> = ref(Array<DirItem>());
-let itemsPromise: Promise<DirItem[]> = invoke("folder_items", {
-  // context: "/home/xithrius/Repositories/twitch-tui",
-});
-itemsPromise.then((val) => (items.value = val));
+const getItems = () => {
+  let itemsPromise: Promise<DirItem[]> = invoke("folder_items", {
+    context: context.value.length == 0 ? null : context.value,
+  });
+  itemsPromise.then((val) => (items.value = val));
+};
+getItems();
+
+const changeContext = (item: DirItem) => {
+  context.value = item.path;
+  getItems();
+};
 
 import { useMagicKeys, whenever } from "@vueuse/core";
 const { Ctrl_h } = useMagicKeys();
@@ -29,7 +40,11 @@ import File from "./File.vue";
   <div class="card flex w-screen flex-wrap content-start mx-8">
     <div v-for="item of items">
       <!-- https://en.wikipedia.org/wiki/Material_conditional -->
-      <div v-if="item.is_hidden <= showHidden" class="h-32 w-48">
+      <div
+        v-if="item.is_hidden <= showHidden"
+        class="h-32 w-48"
+        @click="() => changeContext(item)"
+      >
         <div v-if="item.is_hidden" class="opacity-50">
           <File :item="item" />
         </div>

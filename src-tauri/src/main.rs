@@ -9,14 +9,16 @@ use serde::Serialize;
 
 #[derive(Serialize, PartialEq, PartialOrd, Eq)]
 struct DirItem {
+    path: String,
     name: String,
     is_directory: bool,
     is_hidden: bool,
 }
 
 impl DirItem {
-    fn new(name: String, is_directory: bool, is_hidden: bool) -> Self {
+    fn new(path: String, name: String, is_directory: bool, is_hidden: bool) -> Self {
         Self {
+            path,
             name,
             is_directory,
             is_hidden,
@@ -60,6 +62,7 @@ fn folder_items(context: Option<&str>) -> Vec<DirItem> {
                     .to_string();
 
                 Some(DirItem::new(
+                    item.to_str().unwrap().to_string(),
                     name.to_string(),
                     item.is_dir(),
                     name.starts_with("."),
