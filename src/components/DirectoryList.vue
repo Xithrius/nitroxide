@@ -30,7 +30,12 @@ import File from "./File.vue";
     <div v-for="item of items">
       <!-- https://en.wikipedia.org/wiki/Material_conditional -->
       <div v-if="item.is_hidden <= showHidden" class="h-32 w-48">
-        <File :item="item" />
+        <div v-if="item.is_hidden" class="opacity-50">
+          <File :item="item" />
+        </div>
+        <div v-else>
+          <File :item="item" />
+        </div>
       </div>
     </div>
   </div>
