@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Ref, ref } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
+import File from "./File.vue";
+import Navigation from "./Navigation.vue";
+import { useMagicKeys, whenever } from "@vueuse/core";
 
 type DirItem = {
   path: string;
@@ -9,35 +12,41 @@ type DirItem = {
   is_hidden: boolean;
 };
 
-let context = ref("");
-
+let dirContext = ref("");
+let previousContext = ref("");
 let items: Ref<DirItem[]> = ref(Array<DirItem>());
+
 const getItems = () => {
   let itemsPromise: Promise<DirItem[]> = invoke("folder_items", {
-    context: context.value.length == 0 ? null : context.value,
+    context: dirContext.value.length == 0 ? null : dirContext.value,
   });
   itemsPromise.then((val) => (items.value = val));
 };
+
 getItems();
 
 const changeContext = (item: DirItem) => {
-  context.value = item.path;
-  getItems();
+  if (item.is_directory) {
+    previousContext.value = dirContext.value;
+    dirContext.value = item.path;
+
+    getItems();
+  }
 };
 
-import { useMagicKeys, whenever } from "@vueuse/core";
 const { Ctrl_h } = useMagicKeys();
 
-let showHidden = ref(false);
+let showHidden: Ref<boolean> = ref(false);
+
 whenever(Ctrl_h, () => {
   showHidden.value = !showHidden.value;
 });
-
-import File from "./File.vue";
 </script>
 
 <template>
-  <div class="card flex w-screen flex-wrap content-start mx-8">
+  <div class="flex w-screen flex-wrap content-start mx-8">
+    <Navigation :previous="previousContext" />
+
     <div v-for="item of items">
       <!-- https://en.wikipedia.org/wiki/Material_conditional -->
       <div

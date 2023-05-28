@@ -3,41 +3,11 @@
     windows_subsystem = "windows"
 )]
 
-use std::{cmp::Ordering, env, fs};
+use std::{env, fs};
 
-use serde::Serialize;
+mod directories;
 
-#[derive(Serialize, PartialEq, PartialOrd, Eq)]
-struct DirItem {
-    path: String,
-    name: String,
-    is_directory: bool,
-    is_hidden: bool,
-}
-
-impl DirItem {
-    fn new(path: String, name: String, is_directory: bool, is_hidden: bool) -> Self {
-        Self {
-            path,
-            name,
-            is_directory,
-            is_hidden,
-        }
-    }
-}
-
-impl Ord for DirItem {
-    // Final result should be dirs, hidden dirs, files, hidden files.
-    // All are sorted by name in each section.
-    // TODO: Hidden file sorting by name is out of order.
-    fn cmp(&self, other: &Self) -> Ordering {
-        other
-            .is_directory
-            .cmp(&self.is_directory)
-            .then(self.is_hidden.cmp(&other.is_hidden))
-            .then(self.name.cmp(&other.name))
-    }
-}
+use directories::DirItem;
 
 #[tauri::command]
 fn folder_items(context: Option<&str>) -> Vec<DirItem> {
