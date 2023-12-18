@@ -13,7 +13,7 @@
     "@tauri-apps/api": "^1.4.0",
     "@vueuse/core": "^10.4.1",
     "oh-vue-icons": "^1.0.0-rc3",
-    "vue": "^3.3.4"
+    "vue": "^3.3.12"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.4.0",
